@@ -133,15 +133,21 @@ create_card()
 
 create_back_card()
 {
-	ratio=$((density * 35 / 100))
+	ratio=$((density * 95 / 100))
 	
 	convert -density ${ratio} -background none emblem.svg tmp/emblem.png
 	
 	e_w=$(img_width tmp/emblem.png)
 	e_h=$(img_height tmp/emblem.png)
 	
-	e_x=$((tw / 2 - e_w / 2))
-	e_y=$((th / 2 - e_h / 2))
+	# align center
+	#e_x=$((tw / 2 - e_w / 2))
+	#e_y=$((th / 2 - e_h / 2))
+	
+	# align bottom right
+	offset=3
+	e_x=$((tw - e_w - offset))
+	e_y=$((th - e_h - offset))
 	
 	convert tmp/card.png \
 		tmp/emblem.png -geometry +${e_x}+${e_y} -composite \
