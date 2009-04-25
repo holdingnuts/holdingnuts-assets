@@ -15,8 +15,8 @@ KEYWORDS="~amd64 ~x86"
 IUSE="alsa debug dedicated"
 
 RDEPEND="!dedicated? (
-	>=x11-libs/qt-core-4.4.1
-	>=x11-libs/qt-gui-4.4.1
+	x11-libs/qt-core:4
+	x11-libs/qt-gui:4
 	alsa? (
 		>=media-libs/libsdl-1.2.10[alsa]
 	)
@@ -30,24 +30,24 @@ DEPEND="${RDEPEND}
 src_configure() {
 	local mycmakeargs="$(cmake-utils_use_enable alsa AUDIO)
 		$(cmake-utils_use_enable !dedicated CLIENT)
-		$(cmake-utils_use_enable debug DEBUG)"
-	
+		$(cmake-utils_use_enable debug)"
+
 	mycmakeargs="${mycmakeargs}
 		-DCMAKE_INSTALL_PREFIX=${GAMES_PREFIX}
 		-DCMAKE_DATA_PATH=${GAMES_DATADIR}"
-	
+
 	cmake-utils_src_configure
 }
 
 src_install() {
 	cmake-utils_src_install
-	
+
 	if ! use dedicated ; then
-		domenu ${PN}.desktop
-		doicon ${PN}.png
+		domenu ${PN}.desktop || die "domenu failed"
+		doicon ${PN}.png || die "doicon failed"
 	fi
-	
-	dodoc docs/protocol_spec.txt
-	
+
+	dodoc docs/protocol_spec.txt || die "dodoc failed"
+
 	prepgamesdirs
 }
