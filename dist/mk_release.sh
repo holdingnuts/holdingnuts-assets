@@ -64,8 +64,6 @@ if [[ ! ${src_release} ]] ; then
 	echo "IMPORTANT:"
 	echo "Configure and build the sources with"
 	echo "  cmake -DCMAKE_BUILD_TYPE=Release -DUSE_SVNREV=On"
-	echo "and build the translations with"
-	echo "  make translations"
 	echo
 	
 	cmake_cachefile=${BUILD}/CMakeCache.txt
