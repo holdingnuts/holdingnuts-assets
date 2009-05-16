@@ -125,6 +125,10 @@ if [[ ! ${src_release} ]] ; then
 	fi
 
 
+	echo "Copying ChangeLog file..."
+	cp ${TRUNK}/ChangeLog ${TMPDIR}/ChangeLog
+
+
 	echo "Copying data-dir..."
 	cp -r -t ${TMPDIR} ${TRUNK}/data
 
