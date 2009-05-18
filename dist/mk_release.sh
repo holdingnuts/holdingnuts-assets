@@ -126,7 +126,7 @@ if [[ ! ${src_release} ]] ; then
 
 
 	echo "Copying ChangeLog file..."
-	cp ${TRUNK}/ChangeLog ${TMPDIR}/ChangeLog
+	cp -t ${TMPDIR} files/ChangeLog
 
 
 	echo "Copying data-dir..."
@@ -179,6 +179,9 @@ else
 	
 	echo "Touching svn revision info file..."
 	touch ${TMPDIR}/svn_r${SVNREV}
+	
+	echo "Copying ChangeLog file..."
+	cp -t ${TMPDIR} files/ChangeLog
 	
 	echo "Copying misc..."
 	cp -t ${TMPDIR} files/holdingnuts.png
