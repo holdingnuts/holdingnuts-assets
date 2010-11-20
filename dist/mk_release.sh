@@ -3,9 +3,9 @@
 
 if [[ $# != 2 && $# != 4 ]] ; then
 	echo "source package:" >&2
-	echo "  mk_release.sh <trunk-dir> <version>" >&2
+	echo "  mk_release.sh <src-dir> <version>" >&2
 	echo "binary package:" >&2
-	echo "mk_release.sh <trunk-dir> <build-dir> <platform> <version>" >&2
+	echo "mk_release.sh <src-dir> <build-dir> <platform> <version>" >&2
 	exit 0
 elif [[ $# == 2 ]] ; then
 	src_release=1
@@ -65,19 +65,24 @@ if [[ ! ${src_release} ]] ; then
 	echo "Configure and build the sources with"
 	echo "  cmake -DCMAKE_BUILD_TYPE=Release -DUSE_SVNREV=On"
 	echo
+	echo "Checking..."
 	
 	cmake_cachefile=${BUILD}/CMakeCache.txt
 	
-	cmake_build_type=$(grep CMAKE_BUILD_TYPE ${cmake_cachefile} | cut -d'=' -f2)
-	if [[ ${cmake_build_type} != [Rr][Ee][Ll][Ee][Aa][Ss][Ee] ]] ; then
-		echo "Warning: CMAKE_BUILD_TYPE is not 'RELEASE' (value: ${cmake_build_type})"
+	cmake_build_type=$(sed -n 's/CMAKE_BUILD_TYPE:STRING=\(.*\).*/\1/p' ${cmake_cachefile})
+	if [[ ${cmake_build_type} != [Rr][Ee][Ll][Ee][Aa][Ss][Ee] ]]; then
+		echo "Warning: CMAKE_BUILD_TYPE is not 'Release' (value: ${cmake_build_type})"
 		err_wait=1
+	else
+		echo "    OK: CMAKE_BUILD_TYPE=${cmake_build_type}"
 	fi
 	
-	cmake_usesvnrev=$(grep USE_SVNREV ${cmake_cachefile} | cut -d'=' -f2)
-	if [[ ${cmake_usesvnrev} != [Oo][Nn] ]] ; then
-		echo "Warning: USE_SVNREV is not 'ON' (value: ${cmake_usesvnrev})"
+	cmake_usesvnrev=$(sed -n 's/USE_SVNREV:BOOL=\(.*\).*/\1/p' ${cmake_cachefile})
+	if [[ ${cmake_usesvnrev} != [Oo][Nn] ]]; then
+		echo "Warning: USE_SVNREV is not 'On' (value: ${cmake_usesvnrev})"
 		err_wait=1
+	else
+		echo "    OK: USE_SVNREV=${cmake_usesvnrev}"
 	fi
 fi
 
@@ -85,13 +90,27 @@ echo
 echo "Checking for unmodified trunk..."
 SVNREV=$(svnversion ${TRUNK})
 echo "SVN revision: ${SVNREV}"
+
+match=$(echo ${SVNREV} | grep '^[[:digit:]]*$')
+
+if [[ -n $match ]]; then
+	echo "OK."
+else
+	echo "Warning: The working copy was modified or is not up-to-date."
+	echo
+	err_wait=1
+fi
+
+
 SVNSTATUS=$(svn st --no-ignore ${TRUNK})
 
 # check svn status and throw warning if modified
 if [[ -n ${SVNSTATUS} ]] ; then
+	echo "Warning: The working copy isn't clean:"
 	echo "${SVNSTATUS}"
 	echo
 	err_wait=1
+
 fi
 
 
