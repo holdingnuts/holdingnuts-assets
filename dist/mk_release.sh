@@ -202,9 +202,14 @@ else
 	echo "Copying ChangeLog file..."
 	cp -t ${TMPDIR} files/ChangeLog
 	
+	mkdir ${TMPDIR}/res
+	
+	echo "Copying Init-Script..."
+	cp -t ${TMPDIR}/res files/holdingnuts-server.init
+	
 	echo "Copying misc..."
-	cp -t ${TMPDIR} files/holdingnuts.png
-	cp -t ${TMPDIR} files/holdingnuts.desktop
+	cp -t ${TMPDIR}/res files/holdingnuts.png
+	cp -t ${TMPDIR}/res files/holdingnuts.desktop
 fi
 
 
