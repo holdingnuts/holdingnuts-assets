@@ -137,15 +137,20 @@ mkdir ${TMPDIR}
 if [[ ! ${src_release} ]] ; then
 	if [[ ${convert_text} ]] ; then
 		echo "Copying and converting license file..."
-		awk '{ sub(/$/,"\r"); print }' ${TRUNK}/LICENSE > ${TMPDIR}/LICENSE.txt    # convert CRLF to LF
+		awk '{ sub(/$/,"\r"); print }' ${TRUNK}/LICENSE >${TMPDIR}/LICENSE.txt    # convert LF to CRLF
 	else
 		echo "Copying license file..."
-		cp ${TRUNK}/LICENSE ${TMPDIR}/LICENSE
+		cp -t ${TMPDIR} ${TRUNK}/LICENSE
 	fi
 
 
-	echo "Copying ChangeLog file..."
-	cp -t ${TMPDIR} files/ChangeLog
+	if [[ ${convert_text} ]] ; then
+		echo "Copying and converting ChangeLog file..."
+		awk '{ sub(/$/,"\r"); print }' ${TRUNK}/ChangeLog >${TMPDIR}/ChangeLog.txt    # convert LF to CRLF
+	else
+		echo "Copying ChangeLog file..."
+		cp -t ${TMPDIR} ${TRUNK}/ChangeLog
+	fi
 
 
 	echo "Copying data-dir..."
